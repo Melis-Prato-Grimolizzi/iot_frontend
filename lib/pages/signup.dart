@@ -1,35 +1,33 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:iot_frontend/state/user.dart';
-//import 'package:iot_frontend/pages/home.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class SignupPage extends ConsumerStatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _SignupPageState extends ConsumerState<SignupPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late var userState = ref.watch(userStateProvider.notifier);
 
-  void logIn() async {
+  void signUp() async {
     final jwt =
-        await httpApi.login(usernameController.text, passwordController.text);
+        await httpApi.signup(usernameController.text, passwordController.text);
 
     if (jwt != null) {
-      userState.logIn(jwt);
+      userState.signUp(jwt);
     }
-    if (mounted){
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(jwt != null ? 'Login successful!' : 'Login failed!'),
-        ),
+      SnackBar(
+        content: Text(jwt != null ? 'Signup successful!' : 'Signup failed!'),
+      ),
       );
     }
     if (jwt != null){
@@ -39,14 +37,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           MaterialPageRoute(builder: (context) => const SelectMode()),
         );
       }
-    }
+    }    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Page'),
+        title: const Text('Signup Page'),
       ),
       body: Center(
         child: Padding(
@@ -74,8 +72,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: ElevatedButton(
-                  onPressed: logIn,
-                  child: const Text('Login'),
+                  onPressed: signUp,
+                  child: const Text('Signup'),
                 ),
               ),
             ],

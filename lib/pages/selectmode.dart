@@ -1,42 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:iot_frontend/pages/home.dart';
-import 'package:iot_frontend/pages/login.dart';
-import 'package:iot_frontend/pages/signup.dart';
-//import 'package:iot_frontend/state/user.dart';
+import 'package:iot_frontend/pages/mappage.dart';
+import 'package:iot_frontend/pages/selectslot.dart';
 
-
-
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key});
+class SelectMode extends ConsumerWidget{
+  const SelectMode({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    
-    return Scaffold(
+  Widget build(BuildContext context, WidgetRef ref){
+
+   return Scaffold(
       appBar: AppBar(
-        title: const Text('Find and pay your parking slot'),
+        title: const Text('Select the mode you need'),
         toolbarHeight: 35.0,
         backgroundColor: const Color.fromARGB(255, 64, 101, 132),
       ),
@@ -56,16 +31,7 @@ class MyHomePage extends ConsumerWidget {
         child: Center(
           child: Column(
             children: [              
-              const Padding(
-                padding: EdgeInsets.only(top: 40.0),
-                child: Text('Welcome to',
-                style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  )
-                ),
-              ),
+              
               const GradientText('ParkSense',
                 gradient: LinearGradient(
                   colors: [
@@ -85,10 +51,10 @@ class MyHomePage extends ConsumerWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginPage())
+                      MaterialPageRoute(builder: (context) => const MyMap())
                       );
                   }, 
-                 child: const Text('Log-in'),
+                 child: const Text('Find parking slot'),
                  ),
               ),
                Padding(
@@ -97,10 +63,10 @@ class MyHomePage extends ConsumerWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SignupPage())
+                      MaterialPageRoute(builder: (context) => const SelectSlot())
                       );
                   }, 
-                 child: const Text('Sign-in'),
+                 child: const Text('Pay parking slot'),
                  ),
                )
             ],
@@ -109,15 +75,10 @@ class MyHomePage extends ConsumerWidget {
       )
     );
 
-  // Sacro codice di Carmine che ancora non me la sento di cancellare
-   
-  /*
-  var token = ref.watch(userStateProvider);
-  if (token != null) {
-    return const HomePage();
-  }
-  return const LoginPage();
-  */
+
+
+
+
   }
 }
 
@@ -146,4 +107,3 @@ class GradientText extends StatelessWidget {
     );
   }
 }
-  

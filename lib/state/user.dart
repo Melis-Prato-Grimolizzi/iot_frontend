@@ -13,6 +13,10 @@ class UserState extends _$UserState {
     state = token;
   }
 
+  void signUp(String token){
+    state = token;
+  }
+
   void logOut() {
     state = null;
   }

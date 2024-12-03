@@ -24,7 +24,20 @@ class HttpApi {
       });
       return response.data;
     } catch (e) {
-      print(e);
+      //print(e);
+    }
+    return null;
+  }
+
+  Future<String?> signup(String username, String password) async {
+    try{
+      final response = await dio.post('/users/signup', data: {
+        'username': username,
+        'password': password,
+      });
+      return response.data;
+    } catch(e) {
+      //print(e);
     }
     return null;
   }
