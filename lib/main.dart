@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:iot_frontend/pages/home.dart';
 import 'package:iot_frontend/pages/login.dart';
 import 'package:iot_frontend/pages/signup.dart';
-//import 'package:iot_frontend/state/user.dart';
-
-
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -33,91 +29,72 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Find and pay your parking slot'),
-        toolbarHeight: 35.0,
-        backgroundColor: const Color.fromARGB(255, 64, 101, 132),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient:RadialGradient(
-            
+        appBar: AppBar(
+          title: const Text('Find and pay your parking slot'),
+          toolbarHeight: 35.0,
+          backgroundColor: const Color.fromARGB(255, 64, 101, 132),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+              gradient: RadialGradient(
             colors: [
               Color.fromARGB(255, 28, 70, 104),
               Colors.black,
-              
             ],
             center: Alignment.center,
             radius: 1.0,
-          )
-        ),
-        child: Center(
-          child: Column(
-            children: [              
-              const Padding(
-                padding: EdgeInsets.only(top: 40.0),
-                child: Text('Welcome to',
-                style: TextStyle(
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  )
+          )),
+          child: Center(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 40.0),
+                  child: Text('Welcome to',
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      )),
                 ),
-              ),
-              const GradientText('ParkSense',
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 36, 36, 36),
-                    Color.fromARGB(255, 163, 162, 162),
-                  ]
+                const GradientText('ParkSense',
+                    gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 36, 36, 36),
+                      Color.fromARGB(255, 163, 162, 162),
+                    ]),
+                    style: TextStyle(
+                      fontSize: 80.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
+                    },
+                    child: const Text('Log-in'),
+                  ),
                 ),
-              style: TextStyle(
-                  fontSize: 80.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignupPage()));
+                    },
+                    child: const Text('Sign-in'),
+                  ),
                 )
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage())
-                      );
-                  }, 
-                 child: const Text('Log-in'),
-                 ),
-              ),
-               Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignupPage())
-                      );
-                  }, 
-                 child: const Text('Sign-in'),
-                 ),
-               )
-            ],
+              ],
+            ),
           ),
-        ),
-      )
-    );
-
-  // Sacro codice di Carmine che ancora non me la sento di cancellare
-   
-  /*
-  var token = ref.watch(userStateProvider);
-  if (token != null) {
-    return const HomePage();
-  }
-  return const LoginPage();
-  */
+        ));
   }
 }
 
@@ -126,7 +103,8 @@ class GradientText extends StatelessWidget {
   final TextStyle style;
   final Gradient gradient;
 
-  const GradientText(this.text, {
+  const GradientText(
+    this.text, {
     super.key,
     required this.gradient,
     this.style = const TextStyle(),
@@ -141,9 +119,8 @@ class GradientText extends StatelessWidget {
       },
       child: Text(
         text,
-        style: style.copyWith(color: Colors.white), // Colore di base richiesto
+        style: style.copyWith(color: Colors.white),
       ),
     );
   }
 }
-  

@@ -25,19 +25,19 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     }
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(jwt != null ? 'Signup successful!' : 'Signup failed!'),
-      ),
+        SnackBar(
+          content: Text(jwt != null ? 'Signup successful!' : 'Signup failed!'),
+        ),
       );
     }
-    if (jwt != null){
-      if(mounted){
+    if (jwt != null) {
+      if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SelectMode()),
         );
       }
-    }    
+    }
   }
 
   @override

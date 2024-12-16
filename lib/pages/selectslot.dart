@@ -66,7 +66,8 @@ class SelectSlot extends ConsumerWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text("Scanning...")));
-                                  ref.read(viewedProvider.notifier).state = false;
+                                  ref.read(viewedProvider.notifier).state =
+                                      false;
                                 },
                                 style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -86,15 +87,15 @@ class SelectSlot extends ConsumerWidget {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   if (!viewed) {
-                                    var cnt = snapshot.data?.length;
                                     WidgetsBinding.instance
                                         .addPostFrameCallback((_) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                              content: Text("$cnt slot found")));
-                                      ref.read(viewedProvider.notifier).state = true;
+                                              content:
+                                                  Text("${snapshot.data?.length} slot found")));
+                                      ref.read(viewedProvider.notifier).state =
+                                          true;
                                     });
-                                    
                                   }
                                   return SizedBox(
                                     width: 150,
@@ -161,15 +162,6 @@ class SelectSlot extends ConsumerWidget {
                                     ),
                                   );
                                 } else {
-                                  if (!viewed) {
-                                    // WidgetsBinding.instance
-                                    //     .addPostFrameCallback((_) {
-                                    //   ScaffoldMessenger.of(context)
-                                    //       .showSnackBar(const SnackBar(
-                                    //           content: Text("No slots found")));
-                                    // });
-                                    // ref.read(viewedProvider.notifier).state = true;
-                                  }
                                   return const Center(
                                     child: SizedBox(),
                                   );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:iot_frontend/state/user.dart';
-//import 'package:iot_frontend/pages/home.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
