@@ -1,61 +1,152 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:iot_frontend/controllers/bluetooth_controller.dart';
+import 'package:iot_frontend/pages/selectmode.dart';
 
-class SelectSlot extends ConsumerWidget{
+class SelectSlot extends ConsumerWidget {
   const SelectSlot({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref){
-
-   return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select the mode you need'),
-        toolbarHeight: 35.0,
-        backgroundColor: const Color.fromARGB(255, 64, 101, 132),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient:RadialGradient(
-            
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Select the mode you need'),
+          toolbarHeight: 35.0,
+          backgroundColor: const Color.fromARGB(255, 64, 101, 132),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+              gradient: RadialGradient(
             colors: [
               Color.fromARGB(255, 28, 70, 104),
               Colors.black,
-              
             ],
             center: Alignment.center,
             radius: 1.0,
-          )
-        ),
-        child: const Center(
-          child: Column(
-            children: [              
-              
-              GradientText('ParkSense',
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 36, 36, 36),
-                    Color.fromARGB(255, 163, 162, 162),
-                  ]
-                ),
-              style: TextStyle(
-                  fontSize: 80.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+          )),
+          child: Center(
+            child: Column(
+              children: [
+                const GradientText('ParkSense',
+                    gradient: LinearGradient(colors: [
+                      Color.fromARGB(255, 36, 36, 36),
+                      Color.fromARGB(255, 163, 162, 162),
+                    ]),
+                    style: TextStyle(
+                      fontSize: 80.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
+                const Text('Scan and Select your parking slot',
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
+                Expanded(
+                  child: GetBuilder<BluetoothController>(
+                    init: BluetoothController(),
+                    builder: (controller) {
+                      return SingleChildScrollView(
+                          child: Column(
+                        children: [
+                          Center(
+                            child: ElevatedButton(
+                                onPressed: () => controller.scanDevices(),
+                                style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: Colors.blue,
+                                    minimumSize: const Size(350, 55),
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                    )),
+                                child: const Text(
+                                  "Scan",
+                                  style: TextStyle(fontSize: 18),
+                                )),
+                          ),
+                          StreamBuilder<List<ScanResult>>(
+                              stream: controller.scanResults,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return SizedBox(
+                                    width: 150,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemExtent: 150.0,
+                                      
+                                      itemCount: snapshot.data!.length,
+                                      itemBuilder: (context, index) {
+                                        final data = snapshot.data![index];
+
+                                          return ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              fixedSize: const Size(100, 100)
+                                            ),
+
+                                            onPressed: () {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const SelectMode()),
+                                              );
+                                            },
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  'lib/images/parcheggio.png',
+                                                  width: 30,
+                                                  height: 30,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              
+                                                Text(data.device.platformName),
+                                       
+                                              ],
+                                            )
+                                          );
+                                        
+                                        
+                                        // return Card(
+                                        //   elevation: 2,
+                                        //   child: ListTile(
+                                        //     title: Text(data.device.platformName),
+                                            
+                                        //     //MAC Address
+                                        //     //subtitle: Text(
+                                        //     //   data.device.remoteId.toString()),
+                                            
+                                        //     //potenza segnale
+                                        //     //trailing: Text(data.rssi.toString()),
+                                        //   ),
+                                        // );
+                                          
+                                        
+                                      },
+                                    ),
+                                    
+                                  );
+                                } else {
+                                  return const Center(
+                                    child: Text("No devices found"),
+                                  );
+                                }
+                              })
+                        ],
+                      ));
+                    },
+                  ),
                 )
-              ),
-              Text('Select your parking slot',
-                style: TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                )
-              ),
-              
-            ],
+              ],
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
 }
 
@@ -64,7 +155,8 @@ class GradientText extends StatelessWidget {
   final TextStyle style;
   final Gradient gradient;
 
-  const GradientText(this.text, {
+  const GradientText(
+    this.text, {
     super.key,
     required this.gradient,
     this.style = const TextStyle(),
