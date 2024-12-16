@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:iot_frontend/controllers/bluetooth_controller.dart';
 import 'package:iot_frontend/pages/selectmode.dart';
+
+final viewedProvider = StateProvider<bool>((ref) => false);
 
 class SelectSlot extends ConsumerWidget {
   const SelectSlot({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final viewed = ref.watch(viewedProvider);
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Select the mode you need'),
@@ -45,6 +49,9 @@ class SelectSlot extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     )),
+                const SizedBox(
+                  height: 15.0,
+                ),
                 Expanded(
                   child: GetBuilder<BluetoothController>(
                     init: BluetoothController(),
@@ -54,7 +61,13 @@ class SelectSlot extends ConsumerWidget {
                         children: [
                           Center(
                             child: ElevatedButton(
-                                onPressed: () => controller.scanDevices(),
+                                onPressed: () {
+                                  controller.scanDevices();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text("Scanning...")));
+                                  ref.read(viewedProvider.notifier).state = false;
+                                },
                                 style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     backgroundColor: Colors.blue,
@@ -72,69 +85,93 @@ class SelectSlot extends ConsumerWidget {
                               stream: controller.scanResults,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
+                                  if (!viewed) {
+                                    var cnt = snapshot.data?.length;
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text("$cnt slot found")));
+                                      ref.read(viewedProvider.notifier).state = true;
+                                    });
+                                    
+                                  }
                                   return SizedBox(
                                     width: 150,
                                     child: ListView.builder(
                                       shrinkWrap: true,
                                       itemExtent: 150.0,
-                                      
                                       itemCount: snapshot.data!.length,
                                       itemBuilder: (context, index) {
                                         final data = snapshot.data![index];
 
-                                          return ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20),
-                                              ),
-                                              fixedSize: const Size(100, 100)
+                                        return Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 20.0,
                                             ),
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    fixedSize:
+                                                        const Size(130, 130)),
+                                                onPressed: () {
+                                                  Navigator.pushReplacement(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const SelectMode()),
+                                                  );
+                                                },
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                      'images/slotImage.png',
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                    //const SizedBox(height: 5.0,),
+                                                    Text(data
+                                                        .device.platformName),
+                                                  ],
+                                                )),
+                                          ],
+                                        );
 
-                                            onPressed: () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => const SelectMode()),
-                                              );
-                                            },
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  'lib/images/parcheggio.png',
-                                                  width: 30,
-                                                  height: 30,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              
-                                                Text(data.device.platformName),
-                                       
-                                              ],
-                                            )
-                                          );
-                                        
-                                        
                                         // return Card(
                                         //   elevation: 2,
                                         //   child: ListTile(
                                         //     title: Text(data.device.platformName),
-                                            
+
                                         //     //MAC Address
                                         //     //subtitle: Text(
                                         //     //   data.device.remoteId.toString()),
-                                            
+
                                         //     //potenza segnale
                                         //     //trailing: Text(data.rssi.toString()),
                                         //   ),
                                         // );
-                                          
-                                        
                                       },
                                     ),
-                                    
                                   );
                                 } else {
+                                  if (!viewed) {
+                                    // WidgetsBinding.instance
+                                    //     .addPostFrameCallback((_) {
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .showSnackBar(const SnackBar(
+                                    //           content: Text("No slots found")));
+                                    // });
+                                    // ref.read(viewedProvider.notifier).state = true;
+                                  }
                                   return const Center(
-                                    child: Text("No devices found"),
+                                    child: SizedBox(),
                                   );
                                 }
                               })
@@ -176,103 +213,3 @@ class GradientText extends StatelessWidget {
     );
   }
 }
-
-/*
-import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-
-class SelectSlotWindows extends StatefulWidget {
-  const SelectSlotWindows({super.key});
-
-  @override
-  State<SelectSlotWindows> createState() => _SelectSlotWindowsState();
-}
-
-class _SelectSlotWindowsState extends State<SelectSlotWindows> {
-  final List<BluetoothDevice> _devices = [];
-  bool _isScanning = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkBluetoothState();
-  }
-
-  void _checkBluetoothState() async {
-    final isAvailable = await FlutterBluePlus.isAvailable;
-    final isOn = await FlutterBluePlus.isOn;
-
-    if (!isAvailable) {
-      _showErrorDialog('Bluetooth is not available on this device.');
-    } else if (!isOn) {
-      _showErrorDialog('Please enable Bluetooth to proceed.');
-    }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _startScan() {
-    setState(() {
-      _isScanning = true;
-    });
-
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
-  }
-
-  void _stopScan() {
-    FlutterBluePlus.stopScan();
-    setState(() {
-      _isScanning = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Slot on Windows'),
-      ),
-      body: Column(
-        children: [
-          ElevatedButton.icon(
-            onPressed: _isScanning ? _stopScan : _startScan,
-            icon: Icon(_isScanning ? Icons.stop : Icons.search),
-            label: Text(_isScanning ? 'Stop Scanning' : 'Start Scanning'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _devices.length,
-              itemBuilder: (context, index) {
-                final device = _devices[index];
-                return ListTile(
-                  leading: const Icon(Icons.bluetooth),
-                  title: Text(device.name.isNotEmpty ? device.name : 'Unknown Device'),
-                  subtitle: Text(device.id.toString()),
-                  onTap: () {
-                    // Handle device tap
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-*/

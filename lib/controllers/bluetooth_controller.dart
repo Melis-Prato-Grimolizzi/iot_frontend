@@ -5,21 +5,28 @@ import 'package:get/get.dart';
 class BluetoothController extends GetxController {
   //scan devices
   Future scanDevices() async {
+    
+    // comandi flutter_blue_plus.dart
     // FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
     // FlutterBluePlus.stopScan();
+
     final scannedDevices = <ScanResult>{};
 
     const timeout = Duration(seconds: 3);
     FlutterBluePlus.startScan(
         
         timeout: timeout,
+        // slots filter
         withNames: ["Holy-IOT"]
     );
+
+    Future.delayed(timeout);
 
     final sub =
         FlutterBluePlus.scanResults.expand((e) => e).listen(scannedDevices.add);
 
     await Future.delayed(timeout);
+
     sub.cancel();
   }
 
