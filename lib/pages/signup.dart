@@ -24,8 +24,11 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.statusMessage != null ? 'DJoa' : 'Error'),
-          ),
+            content: Text(response.statusCode == 201 ? 'Signup successful!' :
+            response.statusCode == 400 ? 'Bad request. Please check your input!' : 
+            response.statusCode == 409 ? 'Conflict, user already exists.' :
+            'Error!')
+            ),       
         );
       }
       if (response.statusCode == 201) {
