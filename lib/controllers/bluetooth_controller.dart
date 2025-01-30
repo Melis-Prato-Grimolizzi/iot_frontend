@@ -12,22 +12,24 @@ class BluetoothController extends GetxController {
 
     final scannedDevices = <ScanResult>{};
 
-    const timeout = Duration(seconds: 3);
+    const timeout = Duration(seconds: 5);
     FlutterBluePlus.startScan(
         
-        timeout: timeout,
+        //timeout: timeout,
         // slots filter
-        withNames: ["Holy-IOT"]
+        withNames: [
+          "Slot 1",
+          "Slot 2",
+          "Slot 3",
+          ]
     );
 
-    Future.delayed(timeout);
-
-    final sub =
+    //final sub =
         FlutterBluePlus.scanResults.expand((e) => e).listen(scannedDevices.add);
 
     await Future.delayed(timeout);
 
-    sub.cancel();
+    //sub.cancel();
   }
 
   //show all available devices

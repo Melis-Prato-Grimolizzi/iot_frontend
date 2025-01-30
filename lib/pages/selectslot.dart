@@ -61,13 +61,14 @@ class SelectSlot extends ConsumerWidget {
                         children: [
                           Center(
                             child: ElevatedButton(
-                                onPressed: () {
-                                  controller.scanDevices();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Scanning...")));
-                                  ref.read(viewedProvider.notifier).state =
-                                      false;
+                                onPressed: () async {                                
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text("Scanning..."),
+                                    duration: Duration(seconds: 5),
+                                  ));
+                                  await controller.scanDevices();
+                                  ref.read(viewedProvider.notifier).state = false;
                                 },
                                 style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -91,8 +92,8 @@ class SelectSlot extends ConsumerWidget {
                                         .addPostFrameCallback((_) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                              content:
-                                                  Text("${snapshot.data?.length} slot found")));
+                                              content: Text(
+                                                  "${snapshot.data!.length} slots found")));
                                       ref.read(viewedProvider.notifier).state =
                                           true;
                                     });
@@ -140,6 +141,7 @@ class SelectSlot extends ConsumerWidget {
                                                     //const SizedBox(height: 5.0,),
                                                     Text(data
                                                         .device.platformName),
+                                                    Text(data.rssi.toString()),
                                                   ],
                                                 )),
                                           ],

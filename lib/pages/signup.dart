@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
+import 'package:iot_frontend/pages/login.dart';
 import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:iot_frontend/state/user.dart';
 
@@ -14,28 +15,28 @@ class SignupPage extends ConsumerStatefulWidget {
 class _SignupPageState extends ConsumerState<SignupPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController carPlateController = TextEditingController();
   late var userState = ref.watch(userStateProvider.notifier);
 
   void signUp() async {
-    final jwt =
-        await httpApi.signup(usernameController.text, passwordController.text);
-
-    if (jwt != null) {
-      userState.signUp(jwt);
-    }
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(jwt != null ? 'Signup successful!' : 'Signup failed!'),
-        ),
-      );
-    }
-    if (jwt != null) {
+    final response = await httpApi.signup(usernameController.text,
+        passwordController.text, carPlateController.text);
+    if (response != null) {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SelectMode()),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(response.statusMessage != null ? 'DJoa' : 'Error'),
+          ),
         );
+      }
+      if (response.statusCode == 201) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SelectMode()),
+          );
+        }
       }
     }
   }
@@ -66,6 +67,15 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   controller: passwordController,
                   decoration: const InputDecoration(
                     hintText: 'Password',
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 300,
+                child: TextField(
+                  controller: carPlateController,
+                  decoration: const InputDecoration(
+                    hintText: 'Car Plate',
                   ),
                 ),
               ),

@@ -29,15 +29,16 @@ class HttpApi {
     return null;
   }
 
-  Future<String?> signup(String username, String password) async {
+  Future<Response?> signup(String username, String password, String carPlate) async {
     try{
       final response = await dio.post('/users/signup', data: {
         'username': username,
         'password': password,
+        'car_plate': carPlate,
       });
-      return response.data;
+      return response;
     } catch(e) {
-      //print(e);
+      //print(e)
     }
     return null;
   }
