@@ -21,16 +21,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         await httpApi.login(usernameController.text, passwordController.text);
 
     if (jwt != null) {
-      userState.logIn(jwt);
+      userState.logIn(jwt.data);
     }
     if (mounted){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(jwt != null ? 'Login successful!' : 'Login failed!'),
+          content: Text(jwt?.statusCode == 401 ? 'Bad credentials!' : 'Login successful!' ),
         ),
       );
     }
-    if (jwt != null){
+    if (jwt?.statusCode != 401){
       if(mounted){
         Navigator.pushReplacement(
           context,

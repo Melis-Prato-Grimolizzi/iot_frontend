@@ -17,6 +17,7 @@ class SlotsMap extends StatefulWidget {
 class _SlotsMapState extends State<SlotsMap> {
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
+  bool searchBool = false;
 
   // function that search a destination
   Future<void> _searchLocation(String address) async {
@@ -29,9 +30,13 @@ class _SlotsMapState extends State<SlotsMap> {
         if (data.isNotEmpty) {
           final double lat = double.parse(data[0]['lat']);
           final double lon = double.parse(data[0]['lon']);
-
           // Set the map to the location searched
           _mapController.move(LatLng(lat, lon), 18.0);
+
+          // After 1st research the parcking slots will appear
+          setState(() {
+            searchBool = true;
+          });
         } else {
           _showSnackBar("Destination not found");
         }
@@ -52,81 +57,92 @@ class _SlotsMapState extends State<SlotsMap> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: const MapOptions(
-              initialCenter: LatLng(44.6366949, 10.929104),
-              initialZoom: 9.2,
+      children: [
+        FlutterMap(
+          mapController: _mapController,
+          options: const MapOptions(
+            initialCenter: LatLng(44.646801, 10.925922),
+            initialZoom: 16.0,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.example.app',
             ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.app',
-              ),
-              MarkerLayer(
-                markers: [
-                  for (var slot in widget.slots)
+            MarkerLayer(
+              markers: [
+                // metti l'if qui all'inizio se non vuoi vedere nessun parcheggio all'inizio
+                /*if(searchBool)*/ for (var slot in widget.slots)
+                  if (searchBool)
                     Marker(
                       point: LatLng(double.parse(slot.latitude),
                           double.parse(slot.longitude)),
                       child: Icon(
                         Icons.pin_drop,
-                        color: slot.state
-                            ? const Color.fromARGB(255, 147, 50, 43)
-                            : const Color.fromARGB(255, 58, 224, 64),
+                        color: !slot.state
+                            ? const Color.fromARGB(255, 58, 224, 64) : 
+                            const Color.fromARGB(255, 147, 50, 43),
+                      ),
+                    )
+                  else if(slot.state)
+                    Marker(
+                      point: LatLng(double.parse(slot.latitude),
+                          double.parse(slot.longitude)),
+                      child: const Icon(
+                        Icons.pin_drop,
+                        color: Color.fromARGB(255, 58, 224, 64),
                       ),
                     ),
-                ],
-              ),
-              const RichAttributionWidget(
-                attributions: [
-                  TextSourceAttribution(
-                    'OpenStreetMap contributors',
-                  ),
-                ],
-              ),
-            ],
-          ),
-          // Search Bar
-          Positioned(
-            top: 20,
-            left: 30,
-            right: 30,
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: "Write your destination",
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: (value) {
-                          if (value.isNotEmpty) {
-                            _searchLocation(value);
-                          }
-                        },
+              ],
+            ),
+            const RichAttributionWidget(
+              attributions: [
+                TextSourceAttribution(
+                  'OpenStreetMap contributors',
+                ),
+              ],
+            ),
+          ],
+        ),
+        // Search Bar
+        Positioned(
+          top: 20,
+          left: 30,
+          right: 30,
+          child: Card(
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Write your destination",
+                        border: InputBorder.none,
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        if (_searchController.text.isNotEmpty) {
-                          _searchLocation(_searchController.text);
+                      onSubmitted: (value) {
+                        if (value.isNotEmpty) {
+                          _searchLocation(value);
                         }
                       },
                     ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      if (_searchController.text.isNotEmpty) {
+                        _searchLocation(_searchController.text);
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      );    
+        ),
+      ],
+    );
   }
 }

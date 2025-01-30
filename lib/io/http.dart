@@ -16,15 +16,17 @@ class HttpApi {
   const HttpApi(this.dio);
   final Dio dio;
 
-  Future<String?> login(String username, String password) async {
+  Future<Response?> login(String username, String password) async {
     try {
       final response = await dio.post('/users/login', data: {
         'username': username,
         'password': password,
       });
-      return response.data;
+      return response;
     } catch (e) {
-      //print(e);
+      if (e is DioException) {
+        return e.response;
+      }
     }
     return null;
   }
