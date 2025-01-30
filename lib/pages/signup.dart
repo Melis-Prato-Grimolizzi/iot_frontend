@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:iot_frontend/pages/login.dart';
-import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:iot_frontend/state/user.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
@@ -25,8 +24,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(response.statusMessage != null ? 'DJoa' : 'Error'),
+            content: Text(response.statusMessage != null ? 'DJoa' : 'Error'),
           ),
         );
       }
@@ -34,7 +32,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const SelectMode()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         }
       }
