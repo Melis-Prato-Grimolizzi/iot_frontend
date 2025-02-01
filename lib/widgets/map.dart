@@ -11,6 +11,7 @@ class SlotsMap extends StatefulWidget {
   final List<Slot> slots;
 
   @override
+  // ignore: library_private_types_in_public_api
   _SlotsMapState createState() => _SlotsMapState();
 }
 

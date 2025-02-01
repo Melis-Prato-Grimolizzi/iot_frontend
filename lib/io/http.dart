@@ -59,4 +59,16 @@ class HttpApi {
 
     return slots;
   }
+
+  Future<Response?> startSession(String idSlot) async {
+    try {
+      final response = await dio.post('/slots/start_parking_session/$idSlot');
+      return response;
+    } catch (e) {
+      if (e is DioException) {
+        return e.response;
+      }
+    }
+    return null;
+  }
 }

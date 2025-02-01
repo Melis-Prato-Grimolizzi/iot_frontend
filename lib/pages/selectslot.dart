@@ -3,9 +3,19 @@ import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:iot_frontend/controllers/bluetooth_controller.dart';
-import 'package:iot_frontend/pages/selectmode.dart';
+import 'package:iot_frontend/io/http.dart';
 
 final viewedProvider = StateProvider<bool>((ref) => false);
+
+void startSession(String idSlot) async {
+  final response = await httpApi.startSession(idSlot);
+  if (response != null) {
+    SnackBar(
+        content: Text(response.statusCode == 404
+            ? 'Errore nell\'avvio della sessione'
+            : 'Ok, la sessione con il parcheggio $idSlot è stata avviata!'));
+  }
+}
 
 class SelectSlot extends ConsumerWidget {
   const SelectSlot({super.key});
@@ -16,7 +26,7 @@ class SelectSlot extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Select the mode you need'),
+          title: const Text('Scan and select your parking slot!'),
           toolbarHeight: 35.0,
           backgroundColor: const Color.fromARGB(255, 64, 101, 132),
         ),
@@ -60,15 +70,17 @@ class SelectSlot extends ConsumerWidget {
                           child: Column(
                         children: [
                           Center(
+                            // Scan button
                             child: ElevatedButton(
-                                onPressed: () async {                                
+                                onPressed: () async {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(const SnackBar(
                                     content: Text("Scanning..."),
                                     duration: Duration(seconds: 5),
                                   ));
                                   await controller.scanDevices();
-                                  ref.read(viewedProvider.notifier).state = false;
+                                  ref.read(viewedProvider.notifier).state =
+                                      false;
                                 },
                                 style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -123,12 +135,8 @@ class SelectSlot extends ConsumerWidget {
                                                     fixedSize:
                                                         const Size(130, 130)),
                                                 onPressed: () {
-                                                  Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const SelectMode()),
-                                                  );
+                                                  startSession(
+                                                      data.device.platformName);
                                                 },
                                                 child: Column(
                                                   mainAxisAlignment:
