@@ -81,11 +81,11 @@ class _SlotsMapState extends State<SlotsMap> {
                       child: Icon(
                         Icons.pin_drop,
                         color: !slot.state
-                            ? const Color.fromARGB(255, 58, 224, 64) : 
-                            const Color.fromARGB(255, 147, 50, 43),
+                            ? const Color.fromARGB(255, 58, 224, 64)
+                            : const Color.fromARGB(255, 147, 50, 43),
                       ),
                     )
-                  else if(slot.state)
+                  else if (slot.state)
                     Marker(
                       point: LatLng(double.parse(slot.latitude),
                           double.parse(slot.longitude)),
@@ -143,6 +143,23 @@ class _SlotsMapState extends State<SlotsMap> {
             ),
           ),
         ),
+
+        Positioned(
+            top: 100,
+            left: 30,
+            child: ElevatedButton(
+              onPressed: () {
+                //predizione su tutti i parcheggi
+              },
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: Image.asset(
+                  'images/aiAll.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )),
       ],
     );
   }

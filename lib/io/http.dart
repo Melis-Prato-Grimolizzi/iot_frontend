@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:iot_frontend/models/slot.dart';
 
-const String baseUrl = 'http://localhost:3000';
+const String baseUrl = 'https://iot.grimos.dev';
 
 final httpApi = HttpApi(
   Dio(

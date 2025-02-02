@@ -11,9 +11,14 @@ void startSession(String idSlot) async {
   final response = await httpApi.startSession(idSlot);
   if (response != null) {
     SnackBar(
-        content: Text(response.statusCode == 404
-            ? 'Errore nell\'avvio della sessione'
-            : 'Ok, la sessione con il parcheggio $idSlot è stata avviata!'));
+        content: Text((response.statusCode == 404
+                ? response.statusMessage
+                : response.statusCode == 401
+                    ? response.statusMessage
+                    : response.statusCode == 200
+                        ? response.statusMessage
+                        : 'Error') ??
+            'Error'));
   }
 }
 
