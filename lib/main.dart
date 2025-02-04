@@ -52,7 +52,7 @@ class MyHomePage extends ConsumerWidget {
                   padding: EdgeInsets.only(top: 40.0),
                   child: Text('Welcome to',
                       style: TextStyle(
-                        fontSize: 40.0,
+                        fontSize: 30.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       )),
@@ -63,7 +63,7 @@ class MyHomePage extends ConsumerWidget {
                       Color.fromARGB(255, 163, 162, 162),
                     ]),
                     style: TextStyle(
-                      fontSize: 80.0,
+                      fontSize: 70.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     )),

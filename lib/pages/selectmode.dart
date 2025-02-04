@@ -33,7 +33,7 @@ class SelectMode extends ConsumerWidget {
                       Color.fromARGB(255, 163, 162, 162),
                     ]),
                     style: TextStyle(
-                      fontSize: 80.0,
+                      fontSize: 65.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     )),

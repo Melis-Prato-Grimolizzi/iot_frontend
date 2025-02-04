@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+//import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:iot_frontend/controllers/bluetooth_controller.dart';
@@ -31,7 +32,7 @@ class SelectSlot extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Scan and select your parking slot!'),
+          title: const Text('Scan and select!'),
           toolbarHeight: 35.0,
           backgroundColor: const Color.fromARGB(255, 64, 101, 132),
         ),
@@ -54,11 +55,17 @@ class SelectSlot extends ConsumerWidget {
                       Color.fromARGB(255, 163, 162, 162),
                     ]),
                     style: TextStyle(
-                      fontSize: 80.0,
+                      fontSize: 65.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     )),
-                const Text('Scan and Select your parking slot',
+                const Text('Scan and Select',
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
+                const Text('your parking slot',
                     style: TextStyle(
                       fontSize: 25.0,
                       fontWeight: FontWeight.bold,
@@ -76,6 +83,7 @@ class SelectSlot extends ConsumerWidget {
                         children: [
                           Center(
                             // Scan button
+                            
                             child: ElevatedButton(
                                 onPressed: () async {
                                   ScaffoldMessenger.of(context)
