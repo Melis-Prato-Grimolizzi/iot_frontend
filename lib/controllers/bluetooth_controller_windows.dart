@@ -1,4 +1,4 @@
-import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get.dart';
 
 class BluetoothController extends GetxController {
@@ -15,8 +15,7 @@ class BluetoothController extends GetxController {
           "Slot 1",
           "Slot 2",
           "Slot 3",
-        ]
-        );
+        ]);
 
     FlutterBluePlus.scanResults.expand((e) => e).listen(scannedDevices.add);
 

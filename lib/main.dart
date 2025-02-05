@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iot_frontend/pages/login.dart';
+import 'package:iot_frontend/io/http.dart';
+import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:iot_frontend/pages/signup.dart';
+import 'package:iot_frontend/state/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -10,91 +13,188 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ParkSense',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const AuthCheck(),
     );
   }
 }
 
-class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key});
+class AuthCheck extends ConsumerWidget {
+  const AuthCheck({super.key});
+
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey('jwt');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Find and pay your parking slot'),
-          toolbarHeight: 35.0,
-          backgroundColor: const Color.fromARGB(255, 64, 101, 132),
+    return FutureBuilder<bool>(
+      future: isLoggedIn(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData && snapshot.data == true) {
+          return const SelectMode();
+        } else {
+          return const MyHomePage();
+        }
+      },
+    );
+  }
+}
+
+class MyHomePage extends ConsumerStatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends ConsumerState<MyHomePage> {
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  late var userState = ref.watch(userStateProvider.notifier);
+
+  void logIn() async {
+    final jwt =
+        await httpApi.login(usernameController.text, passwordController.text);
+    if (jwt != null) {
+      userState.logIn(jwt.data);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt', jwt.data);
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(jwt?.statusCode == 401
+              ? 'Bad credentials!'
+              : jwt?.statusCode == 200
+                  ? 'Login successful!'
+                  : jwt?.statusCode == 400
+                      ? 'Bad request. Please check your input!'
+                      : 'Error!'),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-              gradient: RadialGradient(
+      );
+    }
+    if (jwt?.statusCode == 200) {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SelectMode()),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Welcome to ParkSense'),
+        toolbarHeight: 35.0,
+        backgroundColor: const Color.fromARGB(255, 64, 101, 132),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
             colors: [
               Color.fromARGB(255, 28, 70, 104),
               Colors.black,
             ],
             center: Alignment.center,
             radius: 1.0,
-          )),
-          child: Center(
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 40.0),
-                  child: Text('Welcome to',
-                      style: TextStyle(
-                        fontSize: 30.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      )),
-                ),
-                const GradientText('ParkSense',
-                    gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 36, 36, 36),
-                      Color.fromARGB(255, 163, 162, 162),
-                    ]),
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const GradientText(
+                    'ParkSense',
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 36, 36, 36),
+                        Color.fromARGB(255, 163, 162, 162),
+                      ],
+                    ),
                     style: TextStyle(
-                      fontSize: 70.0,
+                      fontSize: 65.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                    )),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: ElevatedButton(
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: usernameController,
+                      decoration: const InputDecoration(
+                        hintText: 'Username',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ElevatedButton(
+                      onPressed: logIn,
+                      child: const Text('Sign-In'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize:
+                            const Size.fromHeight(50), // Set the height
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupPage()),
+                      );
                     },
-                    child: const Text('Log-in'),
+                    child: const Text(
+                      "Don't have an account? Sign-Up",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignupPage()));
-                    },
-                    child: const Text('Sign-in'),
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -109,6 +209,7 @@ class GradientText extends StatelessWidget {
     required this.gradient,
     this.style = const TextStyle(),
   });
+
   @override
   Widget build(BuildContext context) {
     return ShaderMask(
