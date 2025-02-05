@@ -15,7 +15,8 @@ class BluetoothController extends GetxController {
           "Slot 1",
           "Slot 2",
           "Slot 3",
-        ]);
+        ]
+        );
 
     FlutterBluePlus.scanResults.expand((e) => e).listen(scannedDevices.add);
 
