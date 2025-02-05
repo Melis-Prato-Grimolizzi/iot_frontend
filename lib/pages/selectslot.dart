@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-//import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
+//import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue_plus_windows/flutter_blue_plus_windows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:iot_frontend/controllers/bluetooth_controller.dart';
+import 'package:iot_frontend/controllers/bluetooth_controller_windows.dart';
 import 'package:iot_frontend/io/http.dart';
 
 final viewedProvider = StateProvider<bool>((ref) => false);
