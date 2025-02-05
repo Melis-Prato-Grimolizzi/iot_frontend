@@ -23,15 +23,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (jwt != null) {
       userState.logIn(jwt.data);
     }
-    if (mounted){
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(jwt?.statusCode == 401 ? 'Bad credentials!' : 'Login successful!' ),
+          content: Text(jwt?.statusCode == 401
+              ? 'Bad credentials!'
+              : 'Login successful!'),
         ),
       );
     }
-    if (jwt?.statusCode != 401){
-      if(mounted){
+    if (jwt?.statusCode != 401) {
+      if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SelectMode()),
@@ -67,6 +69,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   decoration: const InputDecoration(
                     hintText: 'Password',
                   ),
+                  obscureText: true,
                 ),
               ),
               Padding(
