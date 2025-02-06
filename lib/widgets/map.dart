@@ -87,7 +87,7 @@ class _SlotsMapState extends State<SlotsMap> {
                                   double.parse(slot.longitude)),
                               child: Icon(
                                 Icons.pin_drop,
-                                color: slot.state
+                                color: !slot.state
                                     ? const Color.fromARGB(255, 58, 224, 64)
                                     : const Color.fromARGB(255, 147, 50, 43),
                               ),
