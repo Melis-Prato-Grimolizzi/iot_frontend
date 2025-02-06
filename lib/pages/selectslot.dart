@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:iot_frontend/controllers/bluetooth_controller.dart';
+import 'package:iot_frontend/controllers/bluetooth_controller_windows.dart';
 import 'package:iot_frontend/io/http.dart';
 
 final viewedProvider = StateProvider<bool>((ref) => false);
@@ -14,13 +14,14 @@ void startSession(String idSlot) async {
   if (response != null) {
     SnackBar(
         content: Text((response.statusCode == 404
-                ? response.statusMessage
+                ? 'No, session not started'
                 : response.statusCode == 401
-                    ? response.statusMessage
+                    ? 'No, session not started'
                     : response.statusCode == 200
-                        ? response.statusMessage
-                        : 'Error') ??
-            'Error'));
+                        ? 'Ok, sesssion started'
+                        : 'Error')// ??
+            //'Error'
+            ));
   }
 }
 
@@ -150,7 +151,7 @@ class SelectSlot extends ConsumerWidget {
                                                         const Size(130, 130)),
                                                 onPressed: () {
                                                   startSession(
-                                                      data.device.platformName);
+                                                      data.device.platformName.replaceAll(RegExp(r'[^0-9]'),''));
                                                 },
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -163,7 +164,6 @@ class SelectSlot extends ConsumerWidget {
                                                     //const SizedBox(height: 5.0,),
                                                     Text(data
                                                         .device.platformName),
-                                                    Text(data.rssi.toString()),
                                                   ],
                                                 )),
                                           ],
