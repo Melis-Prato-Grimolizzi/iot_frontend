@@ -166,12 +166,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     padding: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
                       onPressed: logIn,
-                      child: const Text('Sign-In'),
                       style: ElevatedButton.styleFrom(
                         minimumSize:
                             const Size.fromHeight(50), // Set the height
                         textStyle: const TextStyle(fontSize: 20),
                       ),
+                      child: const Text('Sign-In'),
                     ),
                   ),
                   const SizedBox(height: 10),

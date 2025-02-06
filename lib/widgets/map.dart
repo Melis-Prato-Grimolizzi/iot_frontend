@@ -74,8 +74,8 @@ class _SlotsMapState extends State<SlotsMap> {
                   children: [
                     TileLayer(
                       urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.app',
+                          'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                      userAgentPackageName: 'dev.grimos.iot',
                     ),
                     MarkerLayer(
                       markers: [
@@ -111,7 +111,7 @@ class _SlotsMapState extends State<SlotsMap> {
                             child: TextField(
                               controller: _searchController,
                               decoration: const InputDecoration(
-                                hintText: "Write your destination",
+                                hintText: "Search your destination",
                                 border: InputBorder.none,
                               ),
                               onSubmitted: (value) {

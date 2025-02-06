@@ -11,6 +11,7 @@ class SelectMode extends ConsumerWidget {
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('jwt');
+    if (!context.mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MyHomePage()),
@@ -21,10 +22,12 @@ class SelectMode extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () => _logout(context),
-        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _logout(context),
+          ),
+        ],
         title: const Text('Select the mode you need'),
         toolbarHeight: 35.0,
         backgroundColor: const Color.fromARGB(255, 64, 101, 132),
