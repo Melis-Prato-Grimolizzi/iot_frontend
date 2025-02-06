@@ -6,11 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:iot_frontend/controllers/bluetooth_controller_windows.dart';
 import 'package:iot_frontend/io/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final viewedProvider = StateProvider<bool>((ref) => false);
 
 void startSession(String idSlot) async {
-  final response = await httpApi.startSession(idSlot);
+  final prefs = await SharedPreferences.getInstance();
+  final jwt = prefs.getString('jwt');
+  if (jwt == null) return null;
+  final response = await httpApi.startSession(idSlot, jwt);
   if (response != null) {
     SnackBar(
         content: Text((response.statusCode == 404
@@ -19,7 +23,7 @@ void startSession(String idSlot) async {
                     ? 'No, session not started'
                     : response.statusCode == 200
                         ? 'Ok, sesssion started'
-                        : 'Error')// ??
+                        : 'Error') // ??
             //'Error'
             ));
   }
@@ -150,8 +154,11 @@ class SelectSlot extends ConsumerWidget {
                                                     fixedSize:
                                                         const Size(130, 130)),
                                                 onPressed: () {
-                                                  startSession(
-                                                      data.device.platformName.replaceAll(RegExp(r'[^0-9]'),''));
+                                                  startSession(data
+                                                      .device.platformName
+                                                      .replaceAll(
+                                                          RegExp(r'[^0-9]'),
+                                                          ''));
                                                 },
                                                 child: Column(
                                                   mainAxisAlignment:

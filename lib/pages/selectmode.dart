@@ -4,6 +4,7 @@ import 'package:iot_frontend/pages/mappage.dart';
 import 'package:iot_frontend/pages/selectslot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:iot_frontend/main.dart';
+import 'package:iot_frontend/io/http.dart';
 
 class SelectMode extends ConsumerWidget {
   const SelectMode({super.key});
@@ -11,26 +12,33 @@ class SelectMode extends ConsumerWidget {
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('jwt');
-    if (!context.mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MyHomePage()),
     );
   }
 
+  Future<String?> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jwt = prefs.getString('jwt');
+    if (jwt == null) return null;
+    final response = await httpApi.getUser(jwt);
+    return response?.username;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Select the mode you need'),
+        toolbarHeight: 35.0,
+        backgroundColor: const Color.fromARGB(255, 64, 101, 132),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => _logout(context),
           ),
         ],
-        title: const Text('Select the mode you need'),
-        toolbarHeight: 35.0,
-        backgroundColor: const Color.fromARGB(255, 64, 101, 132),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -45,7 +53,7 @@ class SelectMode extends ConsumerWidget {
         ),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const GradientText(
                 'ParkSense',
@@ -61,6 +69,39 @@ class SelectMode extends ConsumerWidget {
                   color: Colors.white,
                 ),
               ),
+              const SizedBox(height: 20),
+              FutureBuilder<String?>(
+                future: getUser(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return const Text('Error loading username');
+                  } else {
+                    final username = snapshot.data ?? 'Guest';
+                    return Column(
+                      children: [
+                        Text(
+                          'Welcome back, $username!',
+                          style: const TextStyle(
+                            fontSize: 24.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'What do you want to do today?',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: ElevatedButton(
@@ -70,6 +111,10 @@ class SelectMode extends ConsumerWidget {
                       MaterialPageRoute(builder: (context) => const MyMap()),
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50), // Set the height
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
                   child: const Text('Find parking slot'),
                 ),
               ),
@@ -83,6 +128,10 @@ class SelectMode extends ConsumerWidget {
                           builder: (context) => const SelectSlot()),
                     );
                   },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50), // Set the height
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
                   child: const Text('Pay parking slot'),
                 ),
               ),
