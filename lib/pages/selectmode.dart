@@ -59,7 +59,7 @@ class SelectMode extends ConsumerWidget {
                 'ParkSense',
                 gradient: LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 36, 36, 36),
+                    Color.fromARGB(255, 4, 204, 215),
                     Color.fromARGB(255, 163, 162, 162),
                   ],
                 ),
@@ -119,7 +119,7 @@ class SelectMode extends ConsumerWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20.0),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
