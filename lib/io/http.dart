@@ -88,4 +88,17 @@ class HttpApi {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> getForecasts(String jwt) async {
+    try {
+      final response = await dio.get('/slots/get_forecasts',
+          options: Options(headers: {'Authorization': 'Bearer $jwt'}));
+      return response.data;
+    } catch (e) {
+      if (e is DioException) {
+        return null;
+      }
+    }
+    return null;
+  }
 }

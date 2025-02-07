@@ -12,18 +12,34 @@ class SelectMode extends ConsumerWidget {
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('jwt');
+    if (!context.mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MyHomePage()),
     );
   }
 
-  Future<String?> getUser() async {
+  Future<String?> getUser(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final jwt = prefs.getString('jwt');
-    if (jwt == null) return null;
+    if (jwt == null) {
+      if (!context.mounted) return null;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MyHomePage()),
+      );
+      return null;
+    }
     final response = await httpApi.getUser(jwt);
-    return response?.username;
+    if (response == null) {
+      if (!context.mounted) return null;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MyHomePage()),
+      );
+      return null;
+    }
+    return response.username;
   }
 
   @override
@@ -71,7 +87,7 @@ class SelectMode extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               FutureBuilder<String?>(
-                future: getUser(),
+                future: getUser(context),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
@@ -104,35 +120,33 @@ class SelectMode extends ConsumerWidget {
               const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MyMap()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50), // Set the height
-                    textStyle: const TextStyle(fontSize: 20),
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyMap()),
+                      );
+                    },
+                    child: const Text('Find parking slot'),
                   ),
-                  child: const Text('Find parking slot'),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SelectSlot()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50), // Set the height
-                    textStyle: const TextStyle(fontSize: 20),
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SelectSlot()),
+                      );
+                    },
+                    child: const Text('Pay parking slot'),
                   ),
-                  child: const Text('Pay parking slot'),
                 ),
               ),
             ],

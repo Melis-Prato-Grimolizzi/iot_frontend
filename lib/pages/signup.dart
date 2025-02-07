@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:iot_frontend/main.dart';
-//import 'package:iot_frontend/pages/login.dart';
 import 'package:iot_frontend/state/user.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
@@ -65,72 +64,85 @@ class _SignupPageState extends ConsumerState<SignupPage> {
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              const GradientText(
-                'ParkSense',
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 36, 36, 36),
-                    Color.fromARGB(255, 163, 162, 162),
-                  ],
-                ),
-                style: TextStyle(
-                  fontSize: 65.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                    hintText: 'Username',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const GradientText(
+                    'ParkSense',
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 4, 204, 215),
+                        Color.fromARGB(255, 163, 162, 162),
+                      ],
+                    ),
+                    style: TextStyle(
+                      fontSize: 65.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: usernameController,
+                      decoration: const InputDecoration(
+                        hintText: 'Username',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
                   ),
-                  obscureText: true,
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: carPlateController,
-                  decoration: const InputDecoration(
-                    hintText: 'Car Plate',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        hintText: 'Password',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: carPlateController,
+                      decoration: const InputDecoration(
+                        hintText: 'Car Plate',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SizedBox(
+                      width: 300,
+                      child: ElevatedButton(
+                        onPressed: signUp,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              const Size.fromHeight(50), // Set the height
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        child: const Text('Sign-up'),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                  onPressed: signUp,
-                  child: const Text('Signup'),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:iot_frontend/controllers/bluetooth_controller_windows.dart';
+import 'package:iot_frontend/controllers/bluetooth_controller.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,7 +57,7 @@ class SelectSlot extends ConsumerWidget {
               children: [
                 const GradientText('ParkSense',
                     gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 36, 36, 36),
+                      Color.fromARGB(255, 4, 204, 215),
                       Color.fromARGB(255, 163, 162, 162),
                     ]),
                     style: TextStyle(
@@ -114,6 +114,11 @@ class SelectSlot extends ConsumerWidget {
                                   style: TextStyle(fontSize: 18),
                                 )),
                           ),
+                          /*ElevatedButton(
+                              onPressed: () {
+                                startSession('1');
+                              },
+                              child: const Text('Start session')),*/
                           StreamBuilder<List<ScanResult>>(
                               stream: controller.scanResults,
                               builder: (context, snapshot) {

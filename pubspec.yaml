@@ -48,6 +48,7 @@ dependencies:
   flutter_blue_plus_windows: 1.25.1
   shared_preferences: ^2.0.6
   get: ^4.6.6
+  flutter_vector_icons: ^2.0.0
 
 
 

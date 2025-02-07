@@ -124,7 +124,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     'ParkSense',
                     gradient: LinearGradient(
                       colors: [
-                        Color.fromARGB(255, 36, 36, 36),
+                        Color.fromARGB(255, 4, 204, 215),
                         Color.fromARGB(255, 163, 162, 162),
                       ],
                     ),
@@ -164,14 +164,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                      onPressed: logIn,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize:
-                            const Size.fromHeight(50), // Set the height
-                        textStyle: const TextStyle(fontSize: 20),
+                    child: SizedBox(
+                      width: 300,
+                      child: ElevatedButton(
+                        onPressed: logIn,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              const Size.fromHeight(50), // Set the height
+                          textStyle: const TextStyle(fontSize: 20),
+                        ),
+                        child: const Text('Sign-In'),
                       ),
-                      child: const Text('Sign-In'),
                     ),
                   ),
                   const SizedBox(height: 10),
