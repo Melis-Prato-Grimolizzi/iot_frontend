@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:m2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+         IgnorableNamespaces="uap mp m2">
+  <Identity Name="com.example.iotfrontend"
+            Publisher="CN=YourPublisher"
+            Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>IoT Frontend</DisplayName>
+    <PublisherDisplayName>Your Publisher Name</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22000.0" />
+  </Dependencies>
+  <Capabilities>
+    <!-- Richiede la connessione internet -->
+    <Capability Name="internetClient" />
+
+    <!-- Abilita l'uso del Bluetooth -->
+    <DeviceCapability Name="bluetooth" />
+    <DeviceCapability Name="proximity" />
+    <m2:DeviceCapability Name="bluetooth.genericAttributeProfile">
+      <m2:Function Type="name:characteristicAccess" />
+    </m2:DeviceCapability>
+  </Capabilities>
+</Package>

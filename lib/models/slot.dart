@@ -4,7 +4,7 @@ part 'slot.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Slot {
-  const Slot({
+   Slot({
     required this.id,
     required this.latitude,
     required this.longitude,

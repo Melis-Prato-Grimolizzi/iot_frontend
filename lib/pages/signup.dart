@@ -1,95 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iot_frontend/io/http.dart';
-import 'package:iot_frontend/pages/selectmode.dart';
-import 'package:iot_frontend/pages/signup.dart';
+import 'package:iot_frontend/main.dart';
 import 'package:iot_frontend/state/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SignupPage extends ConsumerStatefulWidget {
+  const SignupPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ParkSense',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const AuthCheck(),
-    );
-  }
+  ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class AuthCheck extends ConsumerWidget {
-  const AuthCheck({super.key});
-
-  Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey('jwt');
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder<bool>(
-      future: isLoggedIn(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasData && snapshot.data == true) {
-          return const SelectMode();
-        } else {
-          return const MyHomePage();
-        }
-      },
-    );
-  }
-}
-
-class MyHomePage extends ConsumerStatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  ConsumerState<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends ConsumerState<MyHomePage> {
+class _SignupPageState extends ConsumerState<SignupPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController carPlateController = TextEditingController();
   late var userState = ref.watch(userStateProvider.notifier);
 
-  void logIn() async {
-    final jwt =
-        await httpApi.login(usernameController.text, passwordController.text);
-    if (jwt != null) {
-      userState.logIn(jwt.data);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('jwt', jwt.data);
-    }
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(jwt?.statusCode == 401
-              ? 'Bad credentials!'
-              : jwt?.statusCode == 200
-                  ? 'Login successful!'
-                  : jwt?.statusCode == 400
-                      ? 'Bad request. Please check your input!'
-                      : 'Error!'),
-        ),
-      );
-    }
-    if (jwt?.statusCode == 200) {
+  void signUp() async {
+    final response = await httpApi.signup(usernameController.text,
+        passwordController.text, carPlateController.text);
+    if (response != null) {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SelectMode()),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(response.statusCode == 201
+                  ? 'Signup successful!'
+                  : response.statusCode == 400
+                      ? 'Bad request. Please check your input!'
+                      : response.statusCode == 409
+                          ? 'Conflict, user already exists.'
+                          : 'Error!')),
         );
+      }
+      if (response.statusCode == 201) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MyHomePage()),
+          );
+        }
       }
     }
   }
@@ -98,7 +48,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome to ParkSense'),
+        title: const Text('Signup Page'),
         toolbarHeight: 35.0,
         backgroundColor: const Color.fromARGB(255, 64, 101, 132),
       ),
@@ -119,7 +69,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   const GradientText(
                     'ParkSense',
                     gradient: LinearGradient(
@@ -162,33 +112,32 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: carPlateController,
+                      decoration: const InputDecoration(
+                        hintText: 'Car Plate',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: SizedBox(
                       width: 300,
                       child: ElevatedButton(
-                        onPressed: logIn,
+                        onPressed: signUp,
                         style: ElevatedButton.styleFrom(
                           minimumSize:
                               const Size.fromHeight(50), // Set the height
                           textStyle: const TextStyle(fontSize: 20),
                         ),
-                        child: const Text('Sign-In'),
+                        child: const Text('Sign-up'),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignupPage()),
-                      );
-                    },
-                    child: const Text(
-                      "Don't have an account? Sign-Up",
-                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
