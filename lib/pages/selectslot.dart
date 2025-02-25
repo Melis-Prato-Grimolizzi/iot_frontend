@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:iot_frontend/controllers/bluetooth_controller_windows.dart';
+import 'package:iot_frontend/controllers/bluetooth_controller.dart';
 import 'package:iot_frontend/io/http.dart';
 import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +33,8 @@ class SelectSlot extends ConsumerWidget {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: const Text('Session Started!',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.lightGreen)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.lightGreen)),
                 content: SingleChildScrollView(
                   child: ListBody(
                     children: <Widget>[
@@ -70,7 +71,8 @@ class SelectSlot extends ConsumerWidget {
               return AlertDialog(
                 title: const Text(
                   'Something wrong!',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
                 content: SingleChildScrollView(
