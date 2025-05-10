@@ -6,28 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:iot_frontend/controllers/bluetooth_controller.dart';
 import 'package:iot_frontend/io/http.dart';
+import 'package:iot_frontend/pages/selectmode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final viewedProvider = StateProvider<bool>((ref) => false);
-
-void startSession(String idSlot) async {
-  final prefs = await SharedPreferences.getInstance();
-  final jwt = prefs.getString('jwt');
-  if (jwt == null) return null;
-  final response = await httpApi.startSession(idSlot, jwt);
-  if (response != null) {
-    SnackBar(
-        content: Text((response.statusCode == 404
-                ? 'No, session not started'
-                : response.statusCode == 401
-                    ? 'No, session not started'
-                    : response.statusCode == 200
-                        ? 'Ok, sesssion started'
-                        : 'Error') // ??
-            //'Error'
-            ));
-  }
-}
 
 class SelectSlot extends ConsumerWidget {
   const SelectSlot({super.key});
@@ -35,6 +17,91 @@ class SelectSlot extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewed = ref.watch(viewedProvider);
+
+    void startSession(String idSlot) async {
+      final prefs = await SharedPreferences.getInstance();
+      final jwt = prefs.getString('jwt');
+      if (jwt == null) return null;
+      final response = await httpApi.startSession(idSlot, jwt);
+      if (response != null) {
+        // ignore: use_build_context_synchronously
+        if (response.statusCode == 200) {
+          showDialog(
+            // ignore: use_build_context_synchronously
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Session Started!',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.lightGreen)),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Image.asset('images/success.png'),
+                      Text(
+                        'The parking session starts successfully in Slot $idSlot!',
+                        style: TextStyle(fontSize: 25),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SelectMode()),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          showDialog(
+            // ignore: use_build_context_synchronously
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  'Something wrong!',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Image.asset('images/unsuccess.png'),
+                      Text(
+                        'The parking session is not started. Check that you have selected the right slot. Remember to select Parking slot only you\'ve parked!',
+                        style: TextStyle(
+                          fontSize: 25,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      }
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -57,7 +124,7 @@ class SelectSlot extends ConsumerWidget {
               children: [
                 const GradientText('ParkSense',
                     gradient: LinearGradient(colors: [
-                      Color.fromARGB(255, 4, 204, 215),
+                      Color.fromARGB(255, 36, 36, 36),
                       Color.fromARGB(255, 163, 162, 162),
                     ]),
                     style: TextStyle(
@@ -114,11 +181,6 @@ class SelectSlot extends ConsumerWidget {
                                   style: TextStyle(fontSize: 18),
                                 )),
                           ),
-                          /*ElevatedButton(
-                              onPressed: () {
-                                startSession('1');
-                              },
-                              child: const Text('Start session')),*/
                           StreamBuilder<List<ScanResult>>(
                               stream: controller.scanResults,
                               builder: (context, snapshot) {
